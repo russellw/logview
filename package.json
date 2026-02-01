@@ -1,0 +1,19 @@
+{
+  "name": "logview",
+  "version": "1.0.0",
+  "description": "A simple log file viewer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:renderer": "esbuild src/index.jsx --bundle --outfile=dist/renderer.js --loader:.jsx=jsx",
+    "dev": "npm run build:renderer && electron ."
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "electron": "^28.0.0"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
