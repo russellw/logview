@@ -63,7 +63,7 @@ const styles = {
     overflow: 'auto',
     padding: '16px',
     fontFamily: 'Consolas, Monaco, "Courier New", monospace',
-    fontSize: '13px',
+    fontSize: '18px',
     lineHeight: '1.5',
     backgroundColor: '#1e1e1e'
   },
