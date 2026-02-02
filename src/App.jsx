@@ -115,6 +115,16 @@ const styles = {
     fontSize: '14px',
     fontWeight: 500,
     outline: 'none'
+  },
+  saveButton: {
+    marginLeft: '12px',
+    padding: '2px 8px',
+    fontSize: '12px',
+    backgroundColor: '#0e639c',
+    color: '#fff',
+    border: '1px solid #1177bb',
+    borderRadius: '3px',
+    cursor: 'pointer'
   }
 };
 
@@ -242,6 +252,20 @@ function App() {
     });
   }
 
+  async function saveWithoutMarkedLines() {
+    const lines = content.split('\n');
+    const filteredLines = lines.filter((_, index) => !markedLines.has(index));
+    const newContent = filteredLines.join('\n');
+
+    const result = await window.electronAPI.writeFile(selectedFile.path, newContent);
+    if (result.success) {
+      setContent(newContent);
+      setMarkedLines(new Set());
+    } else {
+      setError(result.error);
+    }
+  }
+
   return (
     <div style={styles.container}>
       <div style={styles.sidebar}>
@@ -282,6 +306,11 @@ function App() {
               <>
                 {selectedFile.name}
                 <button style={styles.renameButton} onClick={startRename}>Rename</button>
+                {markedLines.size > 0 && (
+                  <button style={styles.saveButton} onClick={saveWithoutMarkedLines}>
+                    Save ({markedLines.size} lines removed)
+                  </button>
+                )}
               </>
             )
           ) : 'No file selected'}

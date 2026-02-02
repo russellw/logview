@@ -81,3 +81,12 @@ ipcMain.handle('rename-file', async (event, oldPath, newName) => {
     return { success: false, error: err.message };
   }
 });
+
+ipcMain.handle('write-file', async (event, filePath, content) => {
+  try {
+    await fs.promises.writeFile(filePath, content, 'utf-8');
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
