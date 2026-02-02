@@ -90,3 +90,15 @@ ipcMain.handle('write-file', async (event, filePath, content) => {
     return { success: false, error: err.message };
   }
 });
+
+ipcMain.handle('append-deleted-lines', async (event, lines) => {
+  try {
+    const logPath = path.join(logDirectory, 'deleted_lines.log');
+    const timestamp = new Date().toISOString();
+    const entry = lines.map(line => `[${timestamp}] ${line}`).join('\n') + '\n';
+    await fs.promises.appendFile(logPath, entry, 'utf-8');
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});

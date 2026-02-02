@@ -254,11 +254,13 @@ function App() {
 
   async function saveWithoutMarkedLines() {
     const lines = content.split('\n');
+    const deletedLines = lines.filter((_, index) => markedLines.has(index));
     const filteredLines = lines.filter((_, index) => !markedLines.has(index));
     const newContent = filteredLines.join('\n');
 
     const result = await window.electronAPI.writeFile(selectedFile.path, newContent);
     if (result.success) {
+      await window.electronAPI.appendDeletedLines(deletedLines);
       setContent(newContent);
       setMarkedLines(new Set());
     } else {
