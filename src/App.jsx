@@ -161,9 +161,16 @@ function App() {
 
   function toTitleCase(str) {
     const minor = ['a', 'an', 'the', 'and', 'but', 'or', 'nor', 'for', 'yet', 'so', 'as', 'at', 'by', 'in', 'of', 'on', 'to', 'up', 'via'];
-    return str.split(' ').map((word, i) => {
+    let seenFirstWord = false;
+    return str.split(' ').map((word) => {
+      const startsWithLetter = /^[a-zA-Z]/.test(word);
+      if (!startsWithLetter) {
+        return word;
+      }
       const lower = word.toLowerCase();
-      if (i > 0 && minor.includes(lower)) {
+      const isFirstWord = !seenFirstWord;
+      seenFirstWord = true;
+      if (!isFirstWord && minor.includes(lower)) {
         return lower;
       }
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
