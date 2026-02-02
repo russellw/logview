@@ -65,9 +65,20 @@ const styles = {
     fontFamily: 'Consolas, Monaco, "Courier New", monospace',
     fontSize: '13px',
     lineHeight: '1.5',
+    backgroundColor: '#1e1e1e'
+  },
+  logLine: {
     whiteSpace: 'pre-wrap',
     wordBreak: 'break-all',
-    backgroundColor: '#1e1e1e'
+    cursor: 'pointer',
+    padding: '1px 4px',
+    margin: '0 -4px',
+    borderRadius: '2px'
+  },
+  logLineMarked: {
+    color: '#666',
+    textDecoration: 'line-through',
+    backgroundColor: 'rgba(255, 255, 255, 0.03)'
   },
   placeholder: {
     display: 'flex',
@@ -117,6 +128,7 @@ function App() {
   const [hoveredFile, setHoveredFile] = useState(null);
   const [renaming, setRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState('');
+  const [markedLines, setMarkedLines] = useState(new Set());
 
   useEffect(() => {
     loadFiles();
@@ -133,6 +145,7 @@ function App() {
     setLoading(true);
     setError(null);
     setContent('');
+    setMarkedLines(new Set());
 
     const result = await window.electronAPI.readFile(file.path);
     setLoading(false);
@@ -217,6 +230,18 @@ function App() {
     }
   }
 
+  function toggleLineMarked(lineIndex) {
+    setMarkedLines(prev => {
+      const next = new Set(prev);
+      if (next.has(lineIndex)) {
+        next.delete(lineIndex);
+      } else {
+        next.add(lineIndex);
+      }
+      return next;
+    });
+  }
+
   return (
     <div style={styles.container}>
       <div style={styles.sidebar}>
@@ -269,7 +294,18 @@ function App() {
           )}
           {loading && <div style={styles.loading}>Loading...</div>}
           {error && <div style={styles.error}>Error: {error}</div>}
-          {content && <div>{content}</div>}
+          {content && content.split('\n').map((line, index) => (
+            <div
+              key={index}
+              style={{
+                ...styles.logLine,
+                ...(markedLines.has(index) ? styles.logLineMarked : {})
+              }}
+              onClick={() => toggleLineMarked(index)}
+            >
+              {line || '\u00A0'}
+            </div>
+          ))}
         </div>
       </div>
     </div>
