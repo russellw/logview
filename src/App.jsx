@@ -159,6 +159,17 @@ function App() {
     setRenaming(true);
   }
 
+  function toTitleCase(str) {
+    const minor = ['a', 'an', 'the', 'and', 'but', 'or', 'nor', 'for', 'yet', 'so', 'as', 'at', 'by', 'in', 'of', 'on', 'to', 'up', 'via'];
+    return str.split(' ').map((word, i) => {
+      const lower = word.toLowerCase();
+      if (i > 0 && minor.includes(lower)) {
+        return lower;
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }).join(' ');
+  }
+
   async function handleRename() {
     if (!renameValue.trim() || renameValue === selectedFile.name) {
       setRenaming(false);
@@ -168,9 +179,18 @@ function App() {
     let newName = renameValue.trim();
     const oldExt = selectedFile.name.includes('.') ? selectedFile.name.slice(selectedFile.name.lastIndexOf('.')) : '';
     const hasExt = newName.includes('.');
-    if (!hasExt && oldExt) {
-      newName += oldExt;
+
+    let baseName, ext;
+    if (hasExt) {
+      const lastDot = newName.lastIndexOf('.');
+      baseName = newName.slice(0, lastDot);
+      ext = newName.slice(lastDot);
+    } else {
+      baseName = newName;
+      ext = oldExt;
     }
+
+    newName = toTitleCase(baseName) + ext;
 
     const result = await window.electronAPI.renameFile(selectedFile.path, newName);
     if (result.success) {
