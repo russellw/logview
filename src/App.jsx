@@ -165,9 +165,16 @@ function App() {
       return;
     }
 
-    const result = await window.electronAPI.renameFile(selectedFile.path, renameValue);
+    let newName = renameValue.trim();
+    const oldExt = selectedFile.name.includes('.') ? selectedFile.name.slice(selectedFile.name.lastIndexOf('.')) : '';
+    const hasExt = newName.includes('.');
+    if (!hasExt && oldExt) {
+      newName += oldExt;
+    }
+
+    const result = await window.electronAPI.renameFile(selectedFile.path, newName);
     if (result.success) {
-      setSelectedFile({ name: renameValue, path: result.newPath });
+      setSelectedFile({ name: newName, path: result.newPath });
       await loadFiles();
     } else {
       setError(result.error);
