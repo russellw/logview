@@ -3,6 +3,14 @@ const path = require('path');
 const fs = require('fs');
 
 let mainWindow;
+let logDirectory = process.cwd();
+
+// Parse command line arguments for directory path
+// Skip electron binary and app path
+const args = process.argv.slice(app.isPackaged ? 1 : 2);
+if (args.length > 0 && !args[0].startsWith('-')) {
+  logDirectory = path.resolve(args[0]);
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -34,20 +42,22 @@ app.on('activate', () => {
 
 // IPC handlers
 ipcMain.handle('get-log-files', async () => {
-  const cwd = process.cwd();
   try {
-    const files = await fs.promises.readdir(cwd);
+    const files = await fs.promises.readdir(logDirectory);
     const logFiles = files.filter(file => {
       const ext = path.extname(file).toLowerCase();
       return ext === '.txt' || ext === '.log';
     });
-    return logFiles.map(file => ({
-      name: file,
-      path: path.join(cwd, file)
-    }));
+    return {
+      directory: logDirectory,
+      files: logFiles.map(file => ({
+        name: file,
+        path: path.join(logDirectory, file)
+      }))
+    };
   } catch (err) {
     console.error('Error reading directory:', err);
-    return [];
+    return { directory: logDirectory, files: [], error: err.message };
   }
 });
 

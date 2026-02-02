@@ -4,9 +4,8 @@
   "description": "A simple log file viewer",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "build:renderer": "esbuild src/index.jsx --bundle --outfile=dist/renderer.js --loader:.jsx=jsx",
-    "dev": "npm run build:renderer && electron ."
+    "start": "npm run build:renderer && electron .",
+    "build:renderer": "esbuild src/index.jsx --bundle --outfile=dist/renderer.js --loader:.jsx=jsx"
   },
   "devDependencies": {
     "esbuild": "^0.20.0",

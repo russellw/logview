@@ -89,6 +89,7 @@ const styles = {
 
 function App() {
   const [files, setFiles] = useState([]);
+  const [directory, setDirectory] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
@@ -100,8 +101,9 @@ function App() {
   }, []);
 
   async function loadFiles() {
-    const logFiles = await window.electronAPI.getLogFiles();
-    setFiles(logFiles);
+    const result = await window.electronAPI.getLogFiles();
+    setDirectory(result.directory);
+    setFiles(result.files);
   }
 
   async function handleFileSelect(file) {
@@ -133,7 +135,7 @@ function App() {
   return (
     <div style={styles.container}>
       <div style={styles.sidebar}>
-        <div style={styles.sidebarHeader}>Log Files</div>
+        <div style={styles.sidebarHeader} title={directory}>{directory.split(/[/\\]/).pop() || directory}</div>
         <div style={styles.fileList}>
           {files.length === 0 ? (
             <div style={{ padding: '16px', color: '#666', fontSize: '13px' }}>
