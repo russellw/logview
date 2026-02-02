@@ -24,6 +24,7 @@ function createWindow() {
   });
 
   mainWindow.loadFile('dist/index.html');
+  mainWindow.maximize();
 }
 
 app.whenReady().then(createWindow);
