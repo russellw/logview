@@ -70,3 +70,14 @@ ipcMain.handle('read-file', async (event, filePath) => {
     return { success: false, error: err.message };
   }
 });
+
+ipcMain.handle('rename-file', async (event, oldPath, newName) => {
+  try {
+    const dir = path.dirname(oldPath);
+    const newPath = path.join(dir, newName);
+    await fs.promises.rename(oldPath, newPath);
+    return { success: true, newPath };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});

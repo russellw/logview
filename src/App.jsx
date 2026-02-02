@@ -84,6 +84,26 @@ const styles = {
   loading: {
     color: '#888',
     padding: '16px'
+  },
+  renameButton: {
+    marginLeft: '12px',
+    padding: '2px 8px',
+    fontSize: '12px',
+    backgroundColor: '#3c3c3c',
+    color: '#d4d4d4',
+    border: '1px solid #555',
+    borderRadius: '3px',
+    cursor: 'pointer'
+  },
+  renameInput: {
+    backgroundColor: '#3c3c3c',
+    color: '#d4d4d4',
+    border: '1px solid #007acc',
+    borderRadius: '3px',
+    padding: '2px 6px',
+    fontSize: '14px',
+    fontWeight: 500,
+    outline: 'none'
   }
 };
 
@@ -95,6 +115,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [hoveredFile, setHoveredFile] = useState(null);
+  const [renaming, setRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState('');
 
   useEffect(() => {
     loadFiles();
@@ -132,6 +154,35 @@ function App() {
     return style;
   }
 
+  function startRename() {
+    setRenameValue(selectedFile.name);
+    setRenaming(true);
+  }
+
+  async function handleRename() {
+    if (!renameValue.trim() || renameValue === selectedFile.name) {
+      setRenaming(false);
+      return;
+    }
+
+    const result = await window.electronAPI.renameFile(selectedFile.path, renameValue);
+    if (result.success) {
+      setSelectedFile({ name: renameValue, path: result.newPath });
+      await loadFiles();
+    } else {
+      setError(result.error);
+    }
+    setRenaming(false);
+  }
+
+  function handleRenameKeyDown(e) {
+    if (e.key === 'Enter') {
+      handleRename();
+    } else if (e.key === 'Escape') {
+      setRenaming(false);
+    }
+  }
+
   return (
     <div style={styles.container}>
       <div style={styles.sidebar}>
@@ -158,7 +209,23 @@ function App() {
       </div>
       <div style={styles.content}>
         <div style={styles.contentHeader}>
-          {selectedFile ? selectedFile.name : 'No file selected'}
+          {selectedFile ? (
+            renaming ? (
+              <input
+                style={styles.renameInput}
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+                onKeyDown={handleRenameKeyDown}
+                onBlur={handleRename}
+                autoFocus
+              />
+            ) : (
+              <>
+                {selectedFile.name}
+                <button style={styles.renameButton} onClick={startRename}>Rename</button>
+              </>
+            )
+          ) : 'No file selected'}
         </div>
         <div style={styles.logViewer}>
           {!selectedFile && (
