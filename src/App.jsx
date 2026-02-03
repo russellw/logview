@@ -214,10 +214,10 @@ function App() {
     let baseName, ext;
     if (hasExt) {
       const lastDot = newName.lastIndexOf('.');
-      baseName = newName.slice(0, lastDot);
+      baseName = newName.slice(0, lastDot).trimEnd();
       ext = newName.slice(lastDot);
     } else {
-      baseName = newName;
+      baseName = newName.trimEnd();
       ext = oldExt;
     }
 
