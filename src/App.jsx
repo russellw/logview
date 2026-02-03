@@ -114,7 +114,8 @@ const styles = {
     padding: '2px 6px',
     fontSize: '14px',
     fontWeight: 500,
-    outline: 'none'
+    outline: 'none',
+    width: '300px'
   },
   saveButton: {
     marginLeft: '12px',
