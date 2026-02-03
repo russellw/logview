@@ -72,7 +72,7 @@ const styles = {
     wordBreak: 'break-all',
     cursor: 'pointer',
     padding: '1px 4px',
-    margin: '0 -4px',
+    margin: '0 -4px 8px -4px',
     borderRadius: '2px'
   },
   logLineMarked: {
